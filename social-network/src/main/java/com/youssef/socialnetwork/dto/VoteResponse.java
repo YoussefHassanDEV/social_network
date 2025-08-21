@@ -1,4 +1,4 @@
-package com.youssef.socialnetwork.auth.dto;
+package com.youssef.socialnetwork.dto;
 
 import com.youssef.socialnetwork.Enums.VoteType;
 

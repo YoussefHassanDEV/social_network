@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Post {
+public class Message {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,15 +19,17 @@ public class Post {
 
     @ManyToOne
     @JoinColumn(nullable = false)
-    private User author;
+    private User sender;
 
-    @Column(nullable = false, length = 1000)
+    @ManyToOne
+    @JoinColumn(nullable = false)
+    private User receiver;
+
+    @Column(nullable = false, length = 2000)
     private String content;
 
-    private LocalDateTime createdAt;
+    @Column(nullable = false)
+    private LocalDateTime timestamp;
 
-    @PrePersist
-    public void prePersist() {
-        createdAt = LocalDateTime.now();
-    }
+    private boolean read;
 }

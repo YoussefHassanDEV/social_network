@@ -3,31 +3,29 @@ package com.youssef.socialnetwork.model;
 import com.youssef.socialnetwork.Enums.VoteType;
 import jakarta.persistence.*;
 import lombok.*;
-import java.time.Instant;
 
 @Entity
-@Getter @Setter
-@NoArgsConstructor @AllArgsConstructor @Builder
-@Table(
-        name = "votes",
-        uniqueConstraints = @UniqueConstraint(name = "uk_vote_user_post", columnNames = {"user_id","post_id"})
-)
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Vote {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(optional = false) @JoinColumn(name = "user_id")
+    @ManyToOne
+    @JoinColumn(nullable = false)
     private User user;
 
-    @ManyToOne(optional = false) @JoinColumn(name = "post_id")
+    @ManyToOne
     private Post post;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private VoteType type;
+    @ManyToOne
+    private Comment comment;
 
-    @Column(nullable = false)
-    private Instant createdAt;
+    @Enumerated(EnumType.STRING)
+    private VoteType voteType;
 }

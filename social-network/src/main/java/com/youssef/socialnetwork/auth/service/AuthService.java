@@ -1,14 +1,14 @@
 package com.youssef.socialnetwork.auth.service;
 
-
 import com.youssef.socialnetwork.Enums.Role;
-import com.youssef.socialnetwork.auth.dto.AuthResponse;
-import com.youssef.socialnetwork.auth.dto.LoginRequest;
-import com.youssef.socialnetwork.auth.dto.RegisterRequest;
+import com.youssef.socialnetwork.dto.AuthResponse;
+import com.youssef.socialnetwork.dto.LoginRequest;
+import com.youssef.socialnetwork.dto.RegisterRequest;
 import com.youssef.socialnetwork.model.User;
 import com.youssef.socialnetwork.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.*;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 

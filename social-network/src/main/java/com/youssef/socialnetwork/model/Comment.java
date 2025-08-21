@@ -3,7 +3,7 @@ package com.youssef.socialnetwork.model;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -17,16 +17,21 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(columnDefinition = "TEXT")
-    private String content;
-
-    private Instant createdAt;
+    @ManyToOne
+    @JoinColumn(nullable = false)
+    private Post post;
 
     @ManyToOne
     @JoinColumn(nullable = false)
     private User author;
 
-    @ManyToOne
-    @JoinColumn(nullable = false)
-    private Post post;
+    @Column(nullable = false, length = 500)
+    private String content;
+
+    private LocalDateTime createdAt;
+
+    @PrePersist
+    public void prePersist() {
+        createdAt = LocalDateTime.now();
+    }
 }
