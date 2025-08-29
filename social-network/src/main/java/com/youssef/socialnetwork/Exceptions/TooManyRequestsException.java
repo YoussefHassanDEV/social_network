@@ -1,0 +1,5 @@
+package com.youssef.socialnetwork.Exceptions;
+
+public class TooManyRequestsException extends RuntimeException {
+    public TooManyRequestsException(String message) { super(message); }
+}

@@ -16,9 +16,11 @@ public class PostController {
     private final PostService postService;
 
     @PostMapping("/{authorId}")
-    public ResponseEntity<PostResponseDTO> createPost(@PathVariable Long authorId,
-                                                      @RequestBody String content) {
-        return ResponseEntity.ok(postService.createPost(authorId, content));
+    public ResponseEntity<PostResponseDTO> createPost(
+            @PathVariable Long authorId,
+            @RequestParam String content,
+            @RequestParam(required = false) String mediaUrl) {
+        return ResponseEntity.ok(postService.createPost(authorId, content, mediaUrl));
     }
 
     @GetMapping("/user/{userId}")

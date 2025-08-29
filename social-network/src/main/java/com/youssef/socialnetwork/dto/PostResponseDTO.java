@@ -13,4 +13,5 @@ public class PostResponseDTO {
     private String authorName;
     private long upvotes;
     private long downvotes;
+    private String mediaUrl;
 }

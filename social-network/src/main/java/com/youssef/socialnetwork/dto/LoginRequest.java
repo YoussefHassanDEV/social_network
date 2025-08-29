@@ -4,12 +4,12 @@ import jakarta.validation.constraints.NotBlank;
 
 
 import jakarta.validation.constraints.NotBlank;
+import lombok.Data;
 
-public record LoginRequest(
-        @NotBlank(message = "Username is required")
-        String username,
-
-        @NotBlank(message = "Password is required")
-        String password
-) {
+@Data
+public class LoginRequest {
+        @NotBlank
+        private String email;
+        @NotBlank
+        private String password;
 }

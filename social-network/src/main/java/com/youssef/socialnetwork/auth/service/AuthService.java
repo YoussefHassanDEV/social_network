@@ -15,33 +15,42 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class AuthService {
+
     private final UserRepository users;
     private final PasswordEncoder encoder;
     private final AuthenticationManager authManager;
     private final JwtService jwt;
 
     public AuthResponse register(RegisterRequest req) {
-        if (users.findByUsername(req.username()).isPresent())
+        if (users.findByUsername(req.username()).isPresent()) {
             throw new IllegalArgumentException("Username already exists");
-        if (users.findByEmail(req.email()).isPresent())
+        }
+        if (users.findByEmail(req.email()).isPresent()) {
             throw new IllegalArgumentException("Email already exists");
+        }
 
         var user = User.builder()
                 .username(req.username())
                 .email(req.email())
                 .password(encoder.encode(req.password()))
-                .role(Role.USER)
+                .role(Role.USER)   // ✅ now works (global Role)
+                .enabled(true)
                 .build();
+
         users.save(user);
 
-        var token = jwt.generate(user.getUsername());
+        var token = jwt.generateToken(user);
         return AuthResponse.bearer(token, jwt.getExpirationSeconds());
     }
 
     public AuthResponse login(LoginRequest req) {
-        var auth = new UsernamePasswordAuthenticationToken(req.username(), req.password());
+        var auth = new UsernamePasswordAuthenticationToken(req.getEmail(), req.getPassword());
         authManager.authenticate(auth);
-        var token = jwt.generate(req.username());
+
+        var user = users.findByEmail(req.getEmail())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        var token = jwt.generateToken(user);
         return AuthResponse.bearer(token, jwt.getExpirationSeconds());
     }
 }

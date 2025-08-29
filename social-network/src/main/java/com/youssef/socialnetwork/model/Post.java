@@ -24,6 +24,8 @@ public class Post {
     @Column(nullable = false, length = 1000)
     private String content;
 
+    private String mediaUrl;   // ✅ صورة أو فيديو
+
     private LocalDateTime createdAt;
 
     @PrePersist

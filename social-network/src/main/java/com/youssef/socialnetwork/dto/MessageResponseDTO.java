@@ -1,19 +1,17 @@
 package com.youssef.socialnetwork.dto;
 
-import lombok.*;
+import lombok.Builder;
+import lombok.Data;
 
 import java.time.LocalDateTime;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@Data
 @Builder
 public class MessageResponseDTO {
     private Long id;
-    private Long senderId;
-    private String senderName;
-    private Long receiverId;
+    private Long senderId;      // ✅ must exist
+    private String senderName;  // ✅ must exist
+    private Long receiverId;    // ✅ must exist
     private String receiverName;
     private String content;
     private LocalDateTime timestamp;
