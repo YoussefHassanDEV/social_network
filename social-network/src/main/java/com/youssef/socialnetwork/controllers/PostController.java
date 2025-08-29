@@ -23,15 +23,19 @@ public class PostController {
         return ResponseEntity.ok(postService.createPost(authorId, content, mediaUrl));
     }
 
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<List<PostResponseDTO>> getUserPosts(@PathVariable Long userId) {
-        return ResponseEntity.ok(postService.getUserPosts(userId));
+    @GetMapping("/user/{authorId}/{viewerId}")
+    public ResponseEntity<List<PostResponseDTO>> getUserPosts(
+            @PathVariable Long authorId,
+            @PathVariable Long viewerId) {
+        return ResponseEntity.ok(postService.getUserPosts(authorId, viewerId));
     }
 
     @GetMapping("/feed")
-    public ResponseEntity<List<PostResponseDTO>> getAllPosts(@RequestParam(defaultValue = "0") int page,
-                                                             @RequestParam(defaultValue = "10") int size) {
-        return ResponseEntity.ok(postService.getAllPosts(page, size));
+    public ResponseEntity<List<PostResponseDTO>> getAllPosts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam Long viewerId) {
+        return ResponseEntity.ok(postService.getAllPosts(page, size, viewerId));
     }
 
     @DeleteMapping("/{postId}/{userId}")

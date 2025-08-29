@@ -28,17 +28,14 @@ public class AuthService {
         if (users.findByEmail(req.email()).isPresent()) {
             throw new IllegalArgumentException("Email already exists");
         }
-
         var user = User.builder()
                 .username(req.username())
                 .email(req.email())
                 .password(encoder.encode(req.password()))
-                .role(Role.USER)   // ✅ now works (global Role)
+                .role(Role.USER)
                 .enabled(true)
                 .build();
-
         users.save(user);
-
         var token = jwt.generateToken(user);
         return AuthResponse.bearer(token, jwt.getExpirationSeconds());
     }
@@ -46,10 +43,8 @@ public class AuthService {
     public AuthResponse login(LoginRequest req) {
         var auth = new UsernamePasswordAuthenticationToken(req.getEmail(), req.getPassword());
         authManager.authenticate(auth);
-
         var user = users.findByEmail(req.getEmail())
                 .orElseThrow(() -> new RuntimeException("User not found"));
-
         var token = jwt.generateToken(user);
         return AuthResponse.bearer(token, jwt.getExpirationSeconds());
     }

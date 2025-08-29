@@ -14,4 +14,7 @@ public class PostResponseDTO {
     private long upvotes;
     private long downvotes;
     private String mediaUrl;
+    private boolean blurred;
+    private String blurReason;
+
 }

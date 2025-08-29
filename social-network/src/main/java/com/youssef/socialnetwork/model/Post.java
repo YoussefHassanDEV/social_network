@@ -24,10 +24,17 @@ public class Post {
     @Column(nullable = false, length = 1000)
     private String content;
 
-    private String mediaUrl;   // ✅ صورة أو فيديو
+    private String mediaUrl;   // Video or picture
+
+    private String language;
+    private String country;
+
+    private boolean blurred = false;
+
+    private String blurReason; // e.g., "Potential Racism", "Potential Nudity"
 
     private LocalDateTime createdAt;
-
+    private LocalDateTime deletedAt;
     @PrePersist
     public void prePersist() {
         createdAt = LocalDateTime.now();

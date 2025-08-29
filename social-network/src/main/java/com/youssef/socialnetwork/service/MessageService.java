@@ -55,9 +55,7 @@ public class MessageService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         return messageRepository
-                .findBySenderAndReceiverOrReceiverAndSenderOrderByTimestampAsc(
-                        user1, user2, user1, user2, PageRequest.of(page, size)
-                )
+                .findConversation(user1, user2, PageRequest.of(page, size))
                 .stream()
                 .map(this::toDto)
                 .collect(Collectors.toList());
