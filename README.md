@@ -45,7 +45,7 @@ Features: secure JWT auth + blacklist, Redis-powered rate limiting & Pub/Sub, We
 > (Place the ERD image in `./DOCS/social_network_erd.png`)
 
 <p align="center">
-  <img src="./docs/social_network_erd.png" alt="Social Network ERD" width="900" />
+  <img src="./DOCS/social_network_erd.png" alt="Social Network ERD" width="900" />
 </p>
 
 ---
