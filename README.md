@@ -43,7 +43,8 @@ Features: secure **JWT auth + blacklist**, **Redis**-powered rate limiting & Pub
 * ✅ **Stress-tested**: simulated 200k users & 500k posts to validate performance.
 
 ---
-
+## 📊 Entity Relationship Diagram (ERD)
+![ERD](./DOCS/social_network_erd.png)
 # 🏗 Architecture (visual)
 
 ```
