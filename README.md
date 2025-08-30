@@ -1,4 +1,3 @@
-ChatGPT said:
 Social Network Backend
 
 A production-ready backend for a modern social networking platform built with Spring Boot (Java 17).
@@ -596,17 +595,3 @@ Cloud media integration (Cloudinary) decouples storage concerns.
 Performed concurrency stress testing to validate scaling assumptions (200k users, 500k posts).
 
 Modular codebase: controllers → services → repositories, DTOs, validation, and global exceptions.
-
-Next Improvements / Roadmap
-
-Add OpenAPI / Swagger docs (auto-generate from controllers).
-
-Postman / Insomnia collection for all endpoints.
-
-Dockerize and publish a Helm chart for K8s.
-
-Add Prometheus & Grafana for metrics and alerts.
-
-Implement AI-driven moderation (classifier for NSFW / hate speech) and automated blur rules.
-
-Consider ElasticSearch for scalable search and advanced ranking; or an ML recommender service for personalization.
