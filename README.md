@@ -42,7 +42,7 @@ Features: secure JWT auth + blacklist, Redis-powered rate limiting & Pub/Sub, We
 ---
 
 ## 📊 Entity Relationship Diagram (ERD)
-> (Place the ERD image in `./docs/social_network_erd.png`)
+> (Place the ERD image in `./DOCS/social_network_erd.png`)
 
 <p align="center">
   <img src="./docs/social_network_erd.png" alt="Social Network ERD" width="900" />
