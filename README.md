@@ -1,662 +1,612 @@
-🌐 Social Network Backend
-
-A production-ready backend for a social networking platform built with Spring Boot.
-It includes secure JWT authentication with blacklist, Redis-powered rate limiting & pub/sub, real-time WebSocket/STOMP messaging, Cloudinary media uploads, and modular REST APIs for users, posts, comments, friends, messaging, notifications, and admin tools.
-
-This project demonstrates scalable system design, performance testing, and enterprise-level practices — making it an excellent recruiter-facing project.
-
-📑 Table of Contents
-
-✨ Highlights
-
-🏗 Architecture
-
-⚙ Tech Stack
-
-🚀 Features
-
-📊 Data Model
-
-🔐 Security
-
-⚡ Real-Time Messaging
-
-🗂 API Endpoints
-
-⚙ Configuration
-
-🧪 Testing & Performance
-
-▶ How to Run
-
-💼 Recruiter Talking Points
-
-📌 Next Improvements
-
-✨ Highlights
-
-✅ JWT Auth with Token Blacklist → Secure login/logout with revocation.
-
-✅ Redis Rate Limiting → Prevent brute force attacks.
-
-✅ Real-Time Messaging → WebSocket/STOMP + Redis Pub/Sub for scaling.
-
-✅ Cloudinary Uploads → Media storage for posts & profiles.
-
-✅ Smart Feed & Trending Posts → SQL + custom queries for relevance.
-
-✅ Admin Tools → Ban users, delete posts, fetch analytics.
-
-✅ Concurrency Testing → Stress tests with 200k users & 500k posts in under 1.3 minutes.
-
-🏗 Architecture
-Clients (Web/Mobile)
-     ⬇
-Spring Boot REST APIs  ←→  Services  ←→  JPA Repositories  ←→  Database
-     ⬇
- WebSocket/STOMP (ws://.../ws) + Redis Pub/Sub
-     ⬇
- Real-Time Chat, Notifications
-
-⚙ Tech Stack
-
-Java 17 + Spring Boot
-
-Spring Security + JWT (auth & role-based access)
-
-Spring Data JPA (repositories & queries)
-
-Redis (rate limiting, pub/sub)
-
-WebSocket + STOMP (real-time chat)
-
-Cloudinary API (media storage)
-
-JUnit + Stress Tests
-
-Lombok, DTOs, Validation, Exception Handlers
-
-🚀 Features
-👤 User
-
-Register/Login/Logout with JWT.
-
-Profile: view & update (bio, job, location, age, images).
-
-Follow/unfollow, list followers/following.
-
-Friendship system (send/accept/reject/block requests).
-
-📝 Posts
-
-Create/edit/delete posts with text/media.
-
-Blur posts when reported (moderation).
-
-Trending posts (based on votes & recency).
-
-Smart feed (personalized, with filters).
-
-💬 Comments & Votes
-
-Add/edit/delete comments.
-
-Upvote/downvote posts & comments.
-
-✉️ Messaging
-
-Private chat (persisted).
-
-Group chat (create group, add members, chat).
-
-WebSocket + Redis → real-time delivery.
-
-🔔 Notifications
-
-Event-driven notifications.
-
-Mark as read.
-
-🛡️ Admin
-
-Ban users, soft-delete accounts/posts.
-
-Stats (user counts, post counts).
-
-Top authors, most reported posts.
-
-📂 Media Upload
-
-Upload images/videos via /api/upload → stored in Cloudinary.
-
-📊 Data Model (Key Entities)
-
-User (id, username, email, password, role, profile fields).
-
-Post (id, author, content, mediaUrl, language, country, blurred, reports).
-
-Comment (id, post, author, content).
-
-Vote (linked to post/comment + user).
-
-Message/GroupMessage (chat system).
-
-Friendship, Follow, Notification, Report (social graph + moderation).
-
-🔐 Security
-
-JWT Authentication (with expiration).
-
-Blacklist on logout → immediate revocation.
-
-Role-based Access → Admin endpoints restricted.
-
-Redis Rate Limiter → Protect login from brute-force.
-
-Global Exception Handler → Consistent JSON errors.
-
-⚡ Real-Time Messaging
-
-Handshake auth with JWT during WebSocket connection.
-
-Subscriptions:
-
-/user/queue/private → private chat.
-
-/topic/group.{id} → group chat.
-
-Send:
-
-/app/private.send
-
-/app/group.send
-
-Scaling: Redis pub/sub → supports multiple server instances.
-
-🗂 API Endpoints (Highlights)
-🔐 Auth
-
-POST /api/auth/signup → Register new user.
-
-POST /api/auth/login → Login, returns JWT.
-
-POST /api/auth/logout → Logout, blacklist token.
-
-👤 User
-
-GET /api/profile/{id} → Get profile.
-
-PUT /api/profile/{id} → Update profile.
-
-📝 Posts
-
-POST /api/posts/{authorId} → Create post.
-
-GET /api/posts/feed → Smart feed.
-
-GET /api/posts/user/{authorId}/{viewerId} → User posts.
-
-DELETE /api/posts/{id}/{userId} → Delete post.
-
-💬 Comments
-
-POST /api/comments/{postId}/{userId} → Add comment.
-
-GET /api/comments/post/{id} → Post comments.
-
-👍 Votes
-
-POST /api/votes/post/{id}/user/{id}?voteType=UPVOTE
-
-POST /api/votes/comment/{id}/user/{id}?voteType=DOWNVOTE
-
-👥 Social Graph
-
-POST /api/follow/{id}/follow/{id}
-
-POST /api/friends/send/{from}/{to} → Friend request.
-
-✉️ Messaging
-
-POST /api/messages/send/{from}/{to} → Private message.
-
-GET /api/messages/conversation/{id1}/{id2} → History.
-
-POST /api/groups/create?name=X → Create group.
-
-🔔 Notifications
-
-GET /api/notifications/{userId}
-
-POST /api/notifications/read/{id}
-
-🛡️ Admin
-
-POST /api/admin/ban-user/{id}
-
-GET /api/admin/user-stats
-
-GET /api/admin/top-authors
-
-📂 Upload
-
-POST /api/upload → Upload file to Cloudinary.
-
-⚙ Configuration
-
-Environment variables / application.yml:
-
-security.jwt.secret: <your_secret>
-security.jwt.expiration: 36000
-spring.datasource.url: jdbc:mysql://localhost:3306/socialnetwork
-spring.datasource.username: root
-spring.datasource.password: root
-spring.redis.host: localhost
-spring.redis.port: 6379
-cloudinary.cloud_name: <your_cloud>
-cloudinary.api_key: <your_key>
-cloudinary.api_secret: <your_secret>
-
-🧪 Testing & Performance
-
-RepositoryConcurrentStressTest → Validates performance under concurrency.
-
-Generates 200k users + 500k posts.
-
-Runs concurrent queries for Top Authors & Smart Feed in ~1.3 minutes.
-
-Demonstrates scalability & optimization of queries.
-
-▶ How to Run
-# clone
-git clone https://github.com/YoussefHassanDEV/socialnetwork-backend.git
-cd socialnetwork-backend
-
-# set env in application.yml or as environment variables
-# run
-./mvnw spring-boot:run
-
-💼 Recruiter Talking Points
-
-Built secure, scalable backend (JWT blacklist, Redis rate limiter).
-
-Implemented real-time messaging with WebSocket + Redis pub/sub.
-
-Integrated Cloudinary for media storage.
-
-Added admin dashboards for analytics & moderation.
-
-Performed concurrency stress tests (200k users, 500k posts).
-
-Designed modular APIs covering full social graph & content workflows.
-
-📌 Next Improvements
-
-Add Swagger/OpenAPI docs.
-
-Expand E2E tests (WebSocket + auth flows).
-
-Add monitoring/metrics (Prometheus/Grafana).
-
-Implement AI-based content moderation.
-
-✅ This is a complete recruiter-ready README.md.
-
-Would you like me to now format it directly as a polished Markdown file (README.md) so you can drop it into your GitHub repo?
-
-You said:
-SO i wanna make Github Documentation on Everything 
 ChatGPT said:
+Social Network Backend
 
-Perfect 🚀 You want a full GitHub-ready documentation (README.md) that covers everything in your project — features, APIs, architecture, tech stack, testing, and recruiter highlights.
+A production-ready backend for a modern social networking platform built with Spring Boot (Java 17).
+Features: secure JWT auth + blacklist, Redis-powered rate limiting & Pub/Sub, WebSocket/STOMP real-time messaging, Cloudinary media uploads, modular REST APIs (users, posts, comments, friends, messaging, notifications, admin), a Smart Feed with advanced filters and Saved Filters, moderation & blur workflows, and production-focused performance testing.
 
-I’ll make it Markdown-formatted so you can just copy it into your repo’s README.md.
+This README is a single-file, complete GitHub-style documentation for the project — drop into README.md.
 
-Here’s the complete documentation:
+Table of Contents
 
-🌐 Social Network Backend
+Highlights
 
-A production-ready backend for a social networking platform built with Spring Boot.
-It includes secure JWT authentication with blacklist, Redis-powered rate limiting & pub/sub, real-time WebSocket/STOMP messaging, Cloudinary media uploads, and modular REST APIs for users, posts, comments, friends, messaging, notifications, and admin tools.
+Architecture
 
-This project demonstrates scalable system design, performance testing, and enterprise-level practices — making it an excellent recruiter-facing project.
+Tech Stack
 
-📑 Table of Contents
+Feature Overview
 
-✨ Highlights
+Smart Feed — Design & API
 
-🏗 Architecture
+Scoring & Tuning
 
-⚙ Tech Stack
+Pagination & Cursor Behavior
 
-🚀 Features
+Filtering System & Saved Filters
 
-📊 Data Model
+Filter fields & semantics
 
-🔐 Security
+Applying filters — HTTP & JSON
 
-⚡ Real-Time Messaging
+Saved filters endpoints
 
-🗂 API Endpoints
+Trending & Discovery
 
-⚙ Configuration
+Moderation, Reports & Blurring
 
-🧪 Testing & Performance
+Detailed API Endpoints (complete)
 
-▶ How to Run
+Auth, Profile, Posts & Feed, Comments, Votes, Follow, Friends, Messages & Groups, Notifications, Upload, Admin, Filters & Search
 
-💼 Recruiter Talking Points
+Data Model & Indexing Recommendations
 
-📌 Next Improvements
+Security & Rate Limiting
 
-✨ Highlights
+Real-Time (WebSocket/STOMP) Details & Examples
 
-🔐 JWT Auth with Token Blacklist → Secure login/logout with revocation.
+Testing & Performance
 
-🚦 Redis Rate Limiting → Prevent brute-force attacks.
+Run / Deployment
 
-⚡ Real-Time Messaging → WebSocket/STOMP + Redis Pub/Sub for horizontal scaling.
+Recruiter Talking Points
 
-☁ Cloudinary Uploads → Media storage for posts & profiles.
+Next Improvements / Roadmap
 
-📰 Smart Feed & Trending Posts → SQL + custom queries for relevance.
+Highlights
 
-🛡 Admin Tools → Ban users, delete posts, fetch analytics.
+✅ JWT authentication (stateless) + Redis-backed token blacklist for immediate logout/revocation.
 
-🧪 Concurrency Testing → Stress tests with 200k users & 500k posts in under 1.3 minutes.
+✅ Redis rate limiter (login protection) using INCR + EXPIRE.
 
-🏗 Architecture
+✅ Scalable real-time chat: WebSocket + STOMP + Redis Pub/Sub for horizontal scale.
+
+✅ Cloudinary integration for media uploads (posts/profile).
+
+✅ Smart Feed: viewer-aware personalized feed with multi-criteria filters, saved filters, cursor pagination, and ranking.
+
+✅ Moderation: reports, admin queues, blurring (with blurReason) and admin actions.
+
+✅ Stress-tested: batches simulating 200k users & 500k posts — feed & analytics queries optimized.
+
+Architecture
 Clients (Web/Mobile)
-     ⬇
-Spring Boot REST APIs  ←→  Services  ←→  JPA Repositories  ←→  Database
-     ⬇
- WebSocket/STOMP (ws://.../ws) + Redis Pub/Sub
-     ⬇
- Real-Time Chat, Notifications
+    ├── REST API (Spring Boot controllers)
+    ├── WebSocket STOMP (/ws) for real-time
+    ↓
+Spring Boot App
+    ├── Controllers → Services → Repositories (Spring Data JPA)
+    ├── JwtService, JwtAuthFilter, JwtBlacklistService
+    ├── Redis:
+    │     ├─ String ops for RateLimiter
+    │     └─ RedisTemplate + Pub/Sub (chat:messages) for real-time
+    └── Cloudinary integration (media)
+Database (Postgres / MySQL)
 
-⚙ Tech Stack
+Tech Stack
 
-Java 17 + Spring Boot
+Java 17, Spring Boot (web, security, data-jpa, validation, websocket)
 
-Spring Security + JWT (auth & role-based access)
+Spring Security + JWT (custom JwtService + JwtAuthFilter)
 
-Spring Data JPA (repositories & queries)
+Redis (Lettuce): rate limiting, cache primitives, Pub/Sub
 
-Redis (rate limiting, pub/sub)
+WebSocket + STOMP (SockJS fallback), SimpMessagingTemplate
 
-WebSocket + STOMP (real-time chat)
+Cloudinary (media upload service)
 
-Cloudinary API (media storage)
+Lombok, DTOs, Bean Validation, Global Exception Handler
 
-JUnit + Stress Tests
+JUnit + integration & concurrency stress tests
 
-Lombok, DTOs, Validation, Exception Handlers
+Feature Overview (concise)
 
-🚀 Features
-👤 User
+User: register/login/logout, profiles, update avatar/cover, follow/unfollow, friend requests (send/accept/reject/block).
 
-Register/Login/Logout with JWT.
+Posts: create/edit/delete posts (text + media), tags, language & country metadata, blur flag + blur reason.
 
-Profile: view & update (bio, job, location, age, images).
+Smart Feed: personalized ranking (follows/friends/engagement/recency) + filters, saved filters, cursor pagination.
 
-Follow/unfollow, list followers/following.
+Trending: time-windowed trending endpoint.
 
-Friendship system (send/accept/reject/block requests).
+Comments & Votes: add/edit/delete comments; upvote/downvote posts and comments.
 
-📝 Posts
+Messaging: private & group messages; persisted and delivered real-time.
 
-Create/edit/delete posts with text/media.
+Notifications: event-driven, mark-as-read.
 
-Blur posts when reported (moderation).
+Moderation: reports, moderator views, most-reported-posts, blur workflows.
 
-Trending posts (based on votes & recency).
+Admin: ban users, delete posts/users, stats, top authors.
 
-Smart feed (personalized, with filters).
+Uploads: multipart file upload -> Cloudinary -> return URL.
 
-💬 Comments & Votes
+Smart Feed — Design & API
 
-Add/edit/delete comments.
+The Smart Feed is first-class: personalized, filterable, and performant.
 
-Upvote/downvote posts & comments.
+Goals
 
-✉️ Messaging
+Personalization: prioritize content from followed users, friends, or users the viewer interacts with.
 
-Private chat (persisted).
+Freshness: boost recent content with configurable decay.
 
-Group chat (create group, add members, chat).
+Quality: favor high-voted, low-reported content.
 
-WebSocket + Redis → real-time delivery.
+Safety: honor user blocked lists, hide blurred content by default.
 
-🔔 Notifications
+Filters: multi-criteria filters (language, media, tags, country, minUpvotes, date ranges, friendsOnly, etc.).
 
-Event-driven notifications.
+Cursor-based pagination for robust infinite scroll.
 
-Mark as read.
+Feed scoring (conceptual)
+score(post, viewer) =
+    w_follow   * isFollowed(viewer, author)
+  + w_friend   * isFriend(viewer, author)
+  + w_votes    * log(1 + upvotes - downvotes)
+  + w_recency  * recencyBoost(ageSeconds)
+  + w_engage   * engagementScore(post)
+  - w_reports  * log(1 + reports)
+  + w_viewed   * viewerAffinityScore(viewer, author)
 
-🛡️ Admin
 
-Ban users, soft-delete accounts/posts.
+recencyBoost(age) = 1 / (1 + age / halfLife) (halfLife configurable, e.g. 6h)
 
-Stats (user counts, post counts).
+engagementScore = normalized comments + shares over last 24h
 
-Top authors, most reported posts.
+viewerAffinityScore increases if viewer has previously upvoted or commented on author’s posts
 
-📂 Media Upload
+Configurable weights (example defaults)
 
-Upload images/videos via /api/upload → stored in Cloudinary.
+follow = 3, friend = 4, votes = 2, recency = 3, reports = 5, engagement = 2
 
-📊 Data Model (Key Entities)
+Implementations can precompute authorReputation and store aggregated upvotes, reports on posts to speed calculation.
 
-User → id, username, email, password, role, profile fields.
+Feed API
+GET /api/posts/feed
 
-Post → author, content, mediaUrl, language, country, blurred, reports.
+Query parameters
 
-Comment → post, author, content.
+viewerId (required if personalized)
 
-Vote → linked to post/comment + user.
+page (default 0) or cursor (opaque token for cursor pagination)
 
-Message/GroupMessage → chat system.
+size (default 20)
 
-Friendship, Follow, Notification, Report → social graph + moderation.
+sortBy (score | recent | upvotes | comments)
 
-🔐 Security
+direction (desc | asc)
 
-JWT Authentication (with expiration).
+Filters (see next section): mediaOnly, tags, language, country, minUpvotes, since, followingOnly, friendsOnly, etc.
 
-Blacklist on logout → immediate revocation.
+Response
 
-Role-based Access → Admin endpoints restricted.
+{
+  "page": 0,
+  "size": 20,
+  "cursor": "opaque-token",
+  "data": [ PostResponseDTO, ... ]
+}
 
-Redis Rate Limiter → Protect login from brute-force.
 
-Global Exception Handler → Consistent JSON errors.
+PostResponseDTO (essential fields)
 
-⚡ Real-Time Messaging
+id, content, authorId, authorName, upvotes, downvotes, score, mediaUrl, blurred, blurReason, createdAt, tags, language, country
 
-Handshake auth with JWT during WebSocket connection.
+Notes
 
-Subscriptions:
+If cursor supplied, page is ignored. Server returns cursor for next page.
 
-/user/queue/private → private chat.
+Default behavior hides blurred=true posts unless user is moderator or filter explicitly asks for hasBlur=true.
 
-/topic/group.{id} → group chat.
+Pagination & Cursor Behavior
 
-Send:
+Cursor is an opaque base64 token containing (last_score,last_created_at) or a server-generated ID that encodes position.
 
-/app/private.send
+Cursor-based pagination ensures stable ordering even when new posts are created.
 
-/app/group.send
+For large pages use size <= 50 recommended.
 
-Scaling: Redis pub/sub → supports multiple server instances.
+Filtering System & Saved Filters
 
-🗂 API Endpoints (Highlights)
-🔐 Auth
+A flexible server-side filter system supports simple and advanced queries.
 
-POST /api/auth/signup → Register new user.
+Filter fields & semantics
 
-POST /api/auth/login → Login, returns JWT.
+authorId (exact)
 
-POST /api/auth/logout → Logout, blacklist token.
+authorName (exact or partial)
 
-👤 User
+tags (match any by default; optionally matchAll=true)
 
-GET /api/profile/{id} → Get profile.
+mediaOnly (true/false) — requires mediaUrl not null
 
-PUT /api/profile/{id} → Update profile.
+hasBlur (true/false) — show only blurred items (moderator)
 
-📝 Posts
+minUpvotes, maxUpvotes
 
-POST /api/posts/{authorId} → Create post.
+minScore, maxScore
 
-GET /api/posts/feed → Smart feed.
+since (ISO datetime) / until
 
-GET /api/posts/user/{authorId}/{viewerId} → User posts.
+language (ISO)
 
-DELETE /api/posts/{id}/{userId} → Delete post.
+country
 
-PUT /api/posts/{id}/{userId} → Edit post.
+followingOnly (true) — only authors viewer follows
 
-💬 Comments
+friendsOnly (true) — only friends
 
-POST /api/comments/{postId}/{userId} → Add comment.
+contentContains — keyword full-text
 
-GET /api/comments/post/{id} → Post comments.
+reportedOnly — moderation queue
 
-DELETE /api/comments/{id}/{userId} → Delete comment.
+mutuals — mutual following authors
 
-PUT /api/comments/{id}/{userId} → Edit comment.
+Applying filters — HTTP or JSON
 
-👍 Votes
+Simple querystring
 
-POST /api/votes/post/{id}/user/{id}?voteType=UPVOTE/DOWNVOTE
+GET /api/posts/feed?viewerId=5&mediaOnly=true&tags=travel,food&minUpvotes=10
 
-POST /api/votes/comment/{id}/user/{id}?voteType=UPVOTE/DOWNVOTE
 
-GET /api/votes/post/{id}/upvotes / downvotes
+Complex JSON body (POST)
 
-GET /api/votes/comment/{id}/upvotes / downvotes
+POST /api/posts/feed/filtered
+Content-Type: application/json
+{
+  "viewerId":5,
+  "page":0,
+  "size":20,
+  "sortBy":"score",
+  "filters": {
+    "mediaOnly": true,
+    "tags": ["travel","food"],
+    "minUpvotes": 10,
+    "since": "2025-08-01T00:00:00Z",
+    "followingOnly": true
+  }
+}
 
-👥 Social Graph
 
-POST /api/follow/{followerId}/follow/{followingId} → Follow user.
+Response is same shape as GET /api/posts/feed.
 
-DELETE /api/follow/{followerId}/unfollow/{followingId} → Unfollow user.
+Saved filters (user presets)
+
+POST /api/filters — Save a filter:
+
+{ "userId": 5, "name": "OnlyPhotos", "filter": { ... } }
+
+
+GET /api/filters/{userId} — List saved filters.
+
+GET /api/filters/{userId}/{filterId} — Retrieve a saved filter.
+
+DELETE /api/filters/{filterId} — Delete saved filter.
+
+Use saved filter: GET /api/posts/feed?viewerId=5&filterId=abc123
+
+Saved filters are persisted as JSON and can be applied server-side.
+
+Trending & Discovery
+
+GET /api/posts/trending?timeWindow=24h&tags=...&size=10
+
+Trending algorithm (example):
+
+trending_score = (upvotes * log(1+comments)) * freshnessMultiplier / (1 + log(1+reports))
+
+freshnessMultiplier increases for recent posts (e.g., double for posts < 1h).
+
+Support timeWindow (24h, 7d, 30d) to scope trends.
+
+Use Redis sorted sets to cache top-K trending across segments (global, by-country, tag-based).
+
+Moderation, Reports & Blurring
+Report workflow
+
+POST /api/reports/post/{postId}/user/{userId} — file report with reason body.
+
+Reports increment reportsCount on post; if reports exceed threshold post may be auto-blurred or flagged for review.
+
+Blurring
+
+Posts have blurred (boolean) and blurReason (string).
+
+Default client behavior: show blurred preview with CTA. Moderator or explicit user action displays content.
+
+Moderators can PUT /api/posts/{postId}/moderate to set blurred/unblurred and blurReason.
+
+Moderator views
+
+GET /api/admin/most-reported-posts — paged, sorted by reportsCount.
+
+GET /api/admin/reports — list of report objects for review.
+
+Detailed API Endpoints (complete)
+
+For brevity this section lists endpoints with parameters and examples. Try to keep your API controllers consistent with these contracts.
+
+Auth
+
+POST /api/auth/signup
+Body: { "username", "email", "password" }
+-> returns AuthResponse { token, type, expiresIn }
+
+POST /api/auth/login
+Body: { "email", "password" }
+-> returns AuthResponse
+
+POST /api/auth/logout
+Header: Authorization: Bearer <jwt>
+-> 200 OK (blacklists token)
+
+Profile
+
+GET /api/profile/{userId} -> UserProfileDTO
+
+PUT /api/profile/{userId} -> accept UserProfileDTO to update
+
+Posts & Feed
+
+POST /api/posts/{authorId} ?content=...&mediaUrl=... -> create post
+
+GET /api/posts/feed -> Smart feed (see above)
+
+POST /api/posts/feed/filtered -> advanced filtered feed
+
+GET /api/posts/user/{authorId}/{viewerId} -> posts by user (viewer context)
+
+PUT /api/posts/{postId}/{userId} -> edit post
+
+DELETE /api/posts/{postId}/{userId} -> delete post
+
+Comments
+
+POST /api/comments/{postId}/{userId} (body: raw content) -> adds comment
+
+GET /api/comments/post/{postId}?page=&size= -> list comments
+
+PUT /api/comments/{commentId}/{userId} -> edit
+
+DELETE /api/comments/{commentId}/{userId} -> delete
+
+Votes
+
+POST /api/votes/post/{postId}/user/{userId}?voteType=UP|DOWN
+
+GET /api/votes/post/{postId}/upvotes / downvotes
+
+Same endpoints for comment votes
+
+Follow
+
+POST /api/follow/{followerId}/follow/{followingId}
+
+DELETE /api/follow/{followerId}/unfollow/{followingId}
 
 GET /api/follow/{userId}/followers / following
 
-👫 Friendship
+Friendship (bidirectional)
 
-POST /api/friends/send/{from}/{to} → Send request.
+POST /api/friends/send/{requesterId}/{receiverId}
 
-POST /api/friends/accept/{id} → Accept request.
+POST /api/friends/accept/{friendshipId}
 
-POST /api/friends/reject/{id} → Reject request.
+POST /api/friends/reject/{friendshipId}
 
-POST /api/friends/block/{id} → Block request/friendship.
+POST /api/friends/block/{friendshipId}
 
-GET /api/friends/list/{id} → Friend list.
+GET /api/friends/list/{userId}
 
-GET /api/friends/pending/received/{id} → Incoming requests.
+GET /api/friends/pending/received/{userId}
 
-GET /api/friends/pending/sent/{id} → Outgoing requests.
+GET /api/friends/pending/sent/{userId}
 
-✉️ Messaging
+Messaging (REST)
 
-POST /api/messages/send/{from}/{to} → Private message.
+POST /api/messages/send/{senderId}/{receiverId} (body: content) -> persists & returns MessageResponseDTO
 
-GET /api/messages/conversation/{id1}/{id2} → History.
+GET /api/messages/conversation/{user1Id}/{user2Id}?page=&size= -> conversation history
 
-DELETE /api/messages/{id}/{userId} → Delete message.
+DELETE /api/messages/{messageId}/{userId} -> delete message
 
-👨‍👩‍👧 Group Chat
+Groups (chat)
 
-POST /api/groups/create?name=X → Create group.
+POST /api/groups/create?name=... Body: [memberIds] -> create group
 
-POST /api/groups/{id}/add-member/{userId} → Add member.
+POST /api/groups/{groupId}/add-member/{userId} -> add member
 
-POST /api/groups/{id}/send/{senderId} → Send group message.
+POST /api/groups/{groupId}/send/{senderId} -> post group message
 
-GET /api/groups/{id}/messages → Group messages.
+GET /api/groups/{groupId}/messages -> group history
 
-🔔 Notifications
+Notifications
 
-POST /api/notifications/{userId} → Create notification.
+POST /api/notifications/{recipientId} Body: message -> create notification
 
-GET /api/notifications/{userId} → List notifications.
+GET /api/notifications/{userId} -> list notifications
 
-POST /api/notifications/read/{id} → Mark as read.
+POST /api/notifications/read/{notificationId} -> mark as read
 
-🛡️ Admin
+Uploads
 
-POST /api/admin/ban-user/{id} → Ban user.
+POST /api/upload multipart file -> returns { "url": "<cloudinary_url>" }
 
-DELETE /api/admin/delete-user/{id} → Delete user.
+Admin
 
-DELETE /api/admin/delete-post/{id} → Delete post.
+POST /api/admin/ban-user/{userId}
 
-GET /api/admin/user-stats / post-stats
+DELETE /api/admin/delete-user/{userId}
 
-GET /api/admin/top-authors?page=x&size=y
+DELETE /api/admin/delete-post/{postId}
 
-GET /api/admin/most-reported-posts?page=x&size=y
+GET /api/admin/user-stats
 
-📂 Upload
+GET /api/admin/post-stats
 
-POST /api/upload → Upload file (returns Cloudinary URL).
+GET /api/admin/top-authors?page=&size=&sortBy=&direction=
 
-⚙ Configuration
+GET /api/admin/most-reported-posts?page=&size=&sortBy=&direction=
 
-Environment variables / application.yml:
+Filters & Search
 
-security.jwt.secret: <your_secret>
-security.jwt.expiration: 36000
-spring.datasource.url: jdbc:mysql://localhost:3306/socialnetwork
-spring.datasource.username: root
-spring.datasource.password: root
-spring.redis.host: localhost
-spring.redis.port: 6379
-cloudinary.cloud_name: <your_cloud>
-cloudinary.api_key: <your_key>
-cloudinary.api_secret: <your_secret>
+POST /api/filters save filter
 
-🧪 Testing & Performance
+GET /api/filters/{userId}
 
-RepositoryConcurrentStressTest → Validates performance under concurrency.
+GET /api/filters/{userId}/{filterId}
 
-Generates 200k users + 500k posts.
+DELETE /api/filters/{filterId}
 
-Runs concurrent queries for Top Authors & Smart Feed.
+GET /api/search/posts?q=...&page=&size=&tags=&language=
 
-All completed in ~1.3 minutes.
+Data Model & Indexing Recommendations
 
-▶ How to Run
-# clone
+Key entities: User, Post, Comment, Vote, Message, Group, Friendship, Follow, Notification, Report, SavedFilter.
+
+Essential DB indexes
+
+posts(created_at) — recency queries
+
+posts(author_id) — author filters
+
+posts(language), posts(country) — locale filters
+
+post_tags(post_id, tag_id) composite index
+
+aggregated counts posts.upvotes, posts.reports — store as fields updated transactionally
+
+messages(conversation_id, created_at) — conversation retrieval
+
+text index (Postgres tsvector) on posts.content, posts.title (if any) for contentContains search
+
+Materialized / cache suggestions
+
+Precompute top_posts_{country|tag} as materialized view refreshed hourly
+
+Redis sorted sets for top-K trending per segment
+
+Cache feed top results per segment (country/follow bucket) and personalized deltas for real-time freshness
+
+Security & Rate Limiting
+
+JWT: security.jwt.secret + security.jwt.expiration (seconds)
+
+Logout: blacklisted tokens stored in Redis with TTL = remaining token life
+
+Rate limiter: login rl:login:{email}:{ip} using INCR & EXPIRE with defaults e.g., loginMaxAttempts=5 in loginWindowSeconds=60 (configurable)
+
+RBAC: Spring Security roles (ROLE_USER, ROLE_ADMIN) enforced in SecurityConfig
+
+Custom error handlers: AuthenticationEntryPoint for 401, AccessDeniedHandler for 403, and ApiExceptionHandler for validation errors
+
+Real-Time (WebSocket/STOMP) — Details & Examples
+
+Endpoint: /ws (SockJS fallback). STOMP app prefix /app, broker /topic & /queue, user prefix /user.
+
+Handshake: JwtHandshakeInterceptor validates Authorization: Bearer <token> and attaches Principal to WebSocket session.
+
+STOMP destinations
+
+Client subscribe to private: /user/queue/private (receive 1:1 messages)
+
+Group: /topic/group.{groupId}
+
+Send mappings
+
+/app/private.send — payload PrivateChatMessage { receiverId, content }
+
+/app/group.send — payload GroupChatMessage { groupId, content }
+
+JS example
+
+const sock = new SockJS('http://localhost:8080/ws');
+const client = Stomp.over(sock);
+
+client.connect({ Authorization: 'Bearer ' + token }, () => {
+  client.subscribe('/user/queue/private', m => console.log(JSON.parse(m.body)));
+  client.subscribe('/topic/group.7', m => console.log('group', JSON.parse(m.body)));
+  client.send('/app/private.send', {}, JSON.stringify({ receiverId: 42, content: 'Hello' }));
+});
+
+
+Scaling: server publishes incoming messages to Redis channel chat:messages. Each instance subscribes and forwards to its local sessions.
+
+Testing & Performance
+
+Unit tests: services, controllers, utility functions (feed scoring, filter parsing).
+
+Integration tests: auth flows, JWT blacklisting, WebSocket handshake + messaging (mock STOMP).
+
+Stress tests: concurrency test harness generates ~200k users & 500k posts and validates feed generation and analytics (top authors) in ~1.3 minutes — achieved via optimized queries + indexing + caching.
+
+Load recommendations: run feed endpoints behind a caching layer (Redis/HTTP cache), materialize heavy aggregates, use optimistic locking for counters.
+
+Run / Deployment
+Environment (application.yml or env vars)
+security:
+  jwt:
+    secret: <your_secret>
+    expiration: 36000
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/socialnetwork
+    username: dbuser
+    password: dbpass
+
+spring:
+  redis:
+    host: localhost
+    port: 6379
+
+cloudinary:
+  cloud_name: <your_cloud>
+  api_key: <your_key>
+  api_secret: <your_secret>
+
+rate:
+  limit:
+    loginMaxAttempts: 5
+    loginWindowSeconds: 60
+
+Run locally
 git clone https://github.com/YoussefHassanDEV/socialnetwork-backend.git
 cd socialnetwork-backend
-
-# run with maven
+# set env variables or application.yml
+./mvnw clean package
 ./mvnw spring-boot:run
 
-💼 Recruiter Talking Points
+Docker / K8s suggestions (next steps)
 
-🔐 JWT blacklist & Redis rate limiter (production-ready security).
+Dockerfile for app; use manifests for Postgres + Redis + Cloudinary secrets.
 
-⚡ WebSocket + Redis Pub/Sub (scalable real-time chat).
+Horizontal pods behind an ingress; enable sticky sessions only if not using STOMP user destinations + Redis.
 
-☁ Cloudinary integration (media storage).
+Recruiter Talking Points
 
-🛡 Admin analytics & moderation tools.
+Built a production-grade backend: auth, security, role-based access, token revocation.
 
-🧪 Concurrency stress tests (200k users, 500k posts).
+Designed & implemented personalized Smart Feed + filters and saved filters — highlights backend product thinking.
 
-🏗 Clean modular architecture (DTOs, services, controllers).
+Implemented scalable real-time chat using WebSocket/STOMP + Redis Pub/Sub.
 
-📌 Next Improvements
+Cloud media integration (Cloudinary) decouples storage concerns.
 
-Add Swagger/OpenAPI docs.
+Performed concurrency stress testing to validate scaling assumptions (200k users, 500k posts).
 
-Expand E2E tests (WebSocket + auth).
+Modular codebase: controllers → services → repositories, DTOs, validation, and global exceptions.
 
-Add metrics/monitoring (Prometheus/Grafana).
+Next Improvements / Roadmap
 
-Implement AI-driven content moderation.
+Add OpenAPI / Swagger docs (auto-generate from controllers).
+
+Postman / Insomnia collection for all endpoints.
+
+Dockerize and publish a Helm chart for K8s.
+
+Add Prometheus & Grafana for metrics and alerts.
+
+Implement AI-driven moderation (classifier for NSFW / hate speech) and automated blur rules.
+
+Consider ElasticSearch for scalable search and advanced ranking; or an ML recommender service for personalization.
